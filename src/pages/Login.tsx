@@ -37,6 +37,7 @@ function Login() {
 
       localStorage.setItem("access_token", response.data.access);
       localStorage.setItem("refresh_token", response.data.refresh);
+      localStorage.setItem("username", username);
 
       navigate("/dashboard");
     } catch (err: any) {
