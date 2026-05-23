@@ -39,16 +39,28 @@ function AddExpense() {
     setLoading(true);
 
     try {
-      await api.post("/expenses/", {
-        amount,
-        category,
-        description,
+      const payload = {
+        amount: Number(amount),
+        category: category.toLowerCase(),
+        description: description.trim(),
         transaction_date: transactionDate,
-      });
+      };
+
+      console.log("Sending expense:", payload);
+
+      await api.post("/expenses/", payload);
 
       navigate("/expenses");
-    } catch {
-      setError("Failed to add expense. Please check all fields.");
+    } catch (err: any) {
+      console.error("Add expense error:", err?.response?.data || err);
+
+      const backendError = err?.response?.data;
+
+      if (backendError) {
+        setError(JSON.stringify(backendError));
+      } else {
+        setError("Failed to add expense. Please check all fields.");
+      }
     } finally {
       setLoading(false);
     }
@@ -109,6 +121,7 @@ function AddExpense() {
                         id="amount"
                         type="number"
                         step="0.01"
+                        min="1"
                         placeholder="250.00"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
